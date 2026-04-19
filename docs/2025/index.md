@@ -1,5 +1,5 @@
-﻿# 2025 年度目录
+# 2025
 
-- [Developer](./Developer)
-- [Ecosystem](./Ecosystem)
-- [UseCases](./UseCases)
+- [开发者](./Developer)
+- [生态系统](./Ecosystem)
+- [使用案例](./UseCases)
