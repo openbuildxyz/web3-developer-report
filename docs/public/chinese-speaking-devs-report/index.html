@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <title>2025 Web3 华语开发者调研报告</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+        <!-- 加载配置文件 -->
+        <script src="config/content-zh.js"></script>
+        <script src="config/content-en.js"></script>
+        <script src="config/charts-data.js"></script>
+        <script src="config/renderer.js"></script>
+
+        <style>
+            :root {
+                --bg-primary: #ffffff;
+                --bg-secondary: #fafafa;
+                --bg-body: #f5f5f5;
+                --text-primary: #222222;
+                --text-secondary: #4a4a4a;
+                --border-color: #e5e5e5;
+                --accent-color: #2563eb;
+                --shadow-color: rgba(0, 0, 0, 0.05);
+                --chart-box-bg: #fff;
+                --sidebar-width: 240px;
+            }
+
+            [data-theme="dark"] {
+                --bg-primary: #1a1a1a;
+                --bg-secondary: #2d2d2d;
+                --bg-body: #0d0d0d;
+                --text-primary: #f5f5f5;
+                --text-secondary: #b8b8b8;
+                --border-color: #404040;
+                --accent-color: #60a5fa;
+                --shadow-color: rgba(0, 0, 0, 0.3);
+                --chart-box-bg: #2d2d2d;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+                    "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+                margin: 0;
+                padding: 0;
+                background: var(--bg-body);
+                color: var(--text-primary);
+                line-height: 1.7;
+                transition: background-color 0.3s, color 0.3s;
+                display: flex;
+                min-height: 100vh;
+            }
+
+            /* 侧边导航栏 */
+            .sidebar {
+                width: var(--sidebar-width);
+                background: var(--bg-primary);
+                border-right: 1px solid var(--border-color);
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                overflow-y: auto;
+                padding: 20px 0;
+                transition: background-color 0.3s, border-color 0.3s;
+                z-index: 100;
+            }
+
+            .sidebar-nav {
+                padding: 0 16px;
+            }
+
+            .sidebar-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                margin: 16px 0 8px;
+                padding-left: 8px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .sidebar-title:first-child {
+                margin-top: 0;
+            }
+
+            .nav-links {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .nav-links li {
+                margin: 2px 0;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 8px 12px;
+                color: var(--text-primary);
+                text-decoration: none;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: background-color 0.2s;
+                line-height: 1.4;
+            }
+
+            .nav-links a:hover {
+                background: var(--bg-secondary);
+                color: var(--accent-color);
+            }
+
+            .nav-links a.active {
+                background: var(--bg-secondary);
+                color: var(--accent-color);
+                font-weight: 500;
+            }
+
+            /* 侧边栏控制按钮 */
+            .sidebar-controls {
+                margin-top: 24px;
+                padding-top: 16px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .sidebar-control-btn {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
+                padding: 10px 12px;
+                margin: 4px 0;
+                border: 1px solid var(--border-color);
+                background: var(--bg-secondary);
+                color: var(--text-primary);
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.2s;
+                box-sizing: border-box;
+            }
+
+            .sidebar-control-btn:hover {
+                background: var(--accent-color);
+                color: white;
+                border-color: var(--accent-color);
+            }
+
+            .sidebar-control-btn.github-link {
+                text-decoration: none;
+                color: var(--text-primary);
+            }
+
+            .sidebar-control-btn.github-link:hover {
+                color: white;
+            }
+
+            .btn-icon {
+                font-size: 18px;
+                line-height: 1;
+                flex-shrink: 0;
+                min-width: 18px;
+            }
+
+            .btn-icon svg {
+                width: 18px;
+                height: 18px;
+                display: block;
+            }
+
+            .btn-text {
+                flex: 1;
+                text-align: left;
+            }
+
+            /* 主内容区 */
+            .main-wrapper {
+                flex: 1;
+                margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+            }
+
+            main {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 16px 16px 40px;
+                overflow: hidden;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            h1, h2, h3, h4 {
+                font-weight: 600;
+                line-height: 1.4;
+            }
+
+            h1 { font-size: 26px; margin: 12px 0 10px; }
+            h2 { font-size: 20px; margin: 28px 0 12px; }
+            h3 { font-size: 17px; margin: 18px 0 8px; }
+            h4 { font-size: 15px; margin: 14px 0 6px; }
+
+            p { margin: 8px 0; overflow-wrap: break-word; word-wrap: break-word; }
+
+            a {
+                color: var(--accent-color);
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+            a:hover {
+                color: #1d4ed8;
+                text-decoration: underline;
+            }
+
+            [data-theme="dark"] a:hover {
+                color: #60a5fa;
+            }
+
+            .section {
+                background: var(--bg-primary);
+                border-radius: 14px;
+                padding: 18px 16px 20px;
+                margin-bottom: 18px;
+                box-shadow: 0 2px 6px var(--shadow-color);
+                transition: background-color 0.3s, box-shadow 0.3s;
+                overflow: hidden;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            .section-header {
+                border-left: 4px solid var(--accent-color);
+                padding-left: 10px;
+                margin-bottom: 10px;
+            }
+
+            .chart-wrap, .chart-wrap-wide, .chart-wrap-small, .chart-wrap-tiny {
+                margin: 10px auto 4px;
+            }
+
+            .chart-wrap { width: 60%; }
+            .chart-wrap-wide { width: 85%; }
+            .chart-wrap-small { width: 75%; }
+            .chart-wrap-tiny { width: 55%; }
+
+            .charts-row {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                flex-wrap: nowrap;
+                align-items: flex-end;
+            }
+
+            .charts-row .chart-box {
+                flex: 1;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* 只在 charts-row 中的 chart-wrap-tiny 才应用这些样式 */
+            .charts-row .chart-box .chart-wrap-tiny {
+                flex: 0 0 auto;
+                width: 100%;
+                min-width: 250px;
+                max-height: 300px;
+            }
+
+            /* charts-row 中的其他 chart-wrap 也占满宽度 */
+            .charts-row .chart-box .chart-wrap,
+            .charts-row .chart-box .chart-wrap-wide,
+            .charts-row .chart-box .chart-wrap-small {
+                width: 100%;
+            }
+
+            .charts-row canvas {
+                max-height: 280px;
+            }
+
+            /* 为标签多的水平柱状图增加高度 */
+            canvas.chart-tall {
+                min-height: 450px !important;
+                max-height: 600px !important;
+            }
+
+            .subsection-title {
+                font-size: 18px;
+                font-weight: 600;
+                color: var(--text-primary);
+                margin: 24px 0 16px;
+                padding: 0;
+            }
+
+            .chart-box {
+                background: var(--chart-box-bg);
+                border-radius: 12px;
+                padding: 10px 10px 14px;
+                transition: background-color 0.3s;
+            }
+
+            canvas {
+                max-width: 100%;
+            }
+
+            .caption {
+                font-size: 12px;
+                color: var(--text-secondary);
+                margin-top: 4px;
+            }
+
+            .chart-name {
+                font-size: 12px;
+                font-weight: 500;
+                color: rgb(74, 74, 74);
+                text-align: center;
+                margin: 6px 0 2px;
+                padding: 0;
+            }
+
+            .chart-description {
+                margin: 10px 0;
+                padding: 0;
+                font-size: 14px;
+                line-height: 1.6;
+                color: var(--text-primary);
+            }
+
+            .dynamic-content {
+                display: block;
+                width: 100%;
+                margin: 12px 0;
+                line-height: 1.7;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+                word-break: break-word;
+            }
+
+            .dynamic-content p {
+                margin: 12px 0;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+            }
+
+            .dynamic-content ul {
+                padding-left: 24px;
+                margin: 12px 0;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+            }
+
+            .dynamic-content blockquote {
+                margin: 16px 0;
+                padding-left: 16px;
+                border-left: 4px solid var(--accent-color);
+                color: var(--text-secondary);
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+            }
+
+            ul { padding-left: 20px; }
+            li { margin: 4px 0; overflow-wrap: break-word; word-wrap: break-word; }
+
+            blockquote {
+                margin: 10px 0;
+                padding: 8px 12px;
+                border-left: 3px solid var(--border-color);
+                background: var(--bg-secondary);
+                color: var(--text-secondary);
+                font-size: 14px;
+                transition: background-color 0.3s;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+                border-radius: 6px;
+            }
+
+            @media (max-width: 768px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                    transition: transform 0.3s ease;
+                    padding-top: 64px; /* 为顶部工具栏留出空间 */
+                }
+
+                .sidebar.open {
+                    transform: translateX(0);
+                    z-index: 1001; /* 确保打开时在顶部工具栏之上 */
+                }
+
+                .main-wrapper {
+                    margin-left: 0;
+                    width: 100%;
+                }
+
+                .mobile-menu-btn {
+                    display: flex !important;
+                }
+
+                main { padding: 12px 10px 30px; }
+                h1 { font-size: 22px; }
+                h2 { font-size: 18px; }
+                .section { padding: 14px 12px 16px; }
+                .chart-wrap, .chart-wrap-wide, .chart-wrap-small, .chart-wrap-tiny {
+                    width: 95% !important;
+                }
+            }
+
+            /* 移动端菜单按钮 */
+            .mobile-menu-btn {
+                display: none;
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                z-index: 1001;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: var(--accent-color);
+                color: white;
+                border: none;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                font-size: 24px;
+                cursor: pointer;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.2s;
+            }
+
+            .mobile-menu-btn:hover {
+                transform: scale(1.1);
+            }
+
+            /* 遮罩层 */
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 99;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .overlay.active {
+                display: block;
+                opacity: 1;
+            }
+
+            /* 顶部工具栏 */
+            .top-toolbar {
+                position: fixed;
+                top: 0;
+                right: 0;
+                left: var(--sidebar-width);
+                z-index: 1000;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-color);
+                padding: 8px 16px;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 12px;
+                box-shadow: 0 2px 4px var(--shadow-color);
+                transition: background-color 0.3s, border-color 0.3s;
+            }
+
+            .top-toolbar-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 12px;
+                border: 1px solid var(--border-color);
+                background: var(--bg-secondary);
+                color: var(--text-primary);
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 13px;
+                transition: all 0.2s;
+                text-decoration: none;
+                box-sizing: border-box;
+            }
+
+            /* 重置a标签的默认样式 */
+            .top-toolbar-btn[href] {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            .top-toolbar-btn:hover {
+                background: var(--accent-color);
+                color: white;
+                border-color: var(--accent-color);
+            }
+
+            .top-toolbar-btn .btn-icon {
+                font-size: 16px;
+                line-height: 1;
+                flex-shrink: 0;
+            }
+
+            /* PC端SVG图标尺寸 */
+            .top-toolbar-btn svg.btn-icon {
+                width: 16px;
+                height: 16px;
+            }
+
+            /* 调整主内容区的上边距 */
+            .main-wrapper {
+                padding-top: 45px;
+            }
+
+            @media (max-width: 768px) {
+                .top-toolbar {
+                    left: 0;
+                    padding: 8px 10px;
+                    gap: 8px;
+                }
+
+                .top-toolbar-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0;
+                    min-width: 40px;
+                    width: 40px;
+                    height: 40px;
+                    box-sizing: border-box;
+                }
+
+                .top-toolbar-btn .btn-text {
+                    display: none; /* 移动端只显示图标 */
+                }
+
+                .top-toolbar-btn .btn-icon {
+                    font-size: 20px;
+                    line-height: 1;
+                }
+
+                .top-toolbar-btn svg.btn-icon {
+                    width: 20px;
+                    height: 20px;
+                    display: block;
+                }
+
+                /* 语言切换按钮特别突出 */
+                #langToggleTop {
+                    background: var(--accent-color);
+                    color: white;
+                    border-color: var(--accent-color);
+                }
+
+                #langToggleTop:hover {
+                    opacity: 0.9;
+                }
+
+                .main-wrapper {
+                    padding-top: 56px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 侧边导航栏 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-nav">
+                <div class="sidebar-title" id="nav-report-title">报告内容</div>
+                <ul class="nav-links">
+                    <li><a href="#sec0" data-i18n="sec0">调研设计与样本说明</a></li>
+                    <li><a href="#tldr" data-i18n="tldr">TL;DR</a></li>
+                    <li><a href="#sec1" data-i18n="sec1">一、样本概况</a></li>
+                    <li><a href="#sec2" data-i18n="sec2">二、教育与英语</a></li>
+                    <li><a href="#sec3" data-i18n="sec3">三、地理分布</a></li>
+                    <li><a href="#sec4" data-i18n="sec4">四、收入结构</a></li>
+                    <li><a href="#sec5" data-i18n="sec5">五、技术栈</a></li>
+                    <li><a href="#sec6" data-i18n="sec6">六、动机与挑战</a></li>
+                    <li><a href="#sec7" data-i18n="sec7">七、开源参与</a></li>
+                    <li><a href="#sec8" data-i18n="sec8">八、社区环境</a></li>
+                    <li><a href="#conclusion" data-i18n="conclusion">结语</a></li>
+                </ul>
+                <div class="sidebar-title" id="nav-about-title">关于</div>
+                <ul class="nav-links">
+                    <li><a href="#how-to-contribute" data-i18n="how-to-contribute">如何贡献</a></li>
+                    <li><a href="#acknowledgments" data-i18n="acknowledgments">致谢</a></li>
+                </ul>
+
+                <!-- 控制按钮 -->
+                <div class="sidebar-controls">
+                    <a href="https://github.com/openbuildxyz/web3-chinese-speaking-devs-report" target="_blank" class="sidebar-control-btn github-link">
+                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                        </svg>
+                        <span class="btn-text">GitHub</span>
+                    </a>
+                    <button class="sidebar-control-btn" id="themeToggle">
+                        <span class="btn-icon">🌙</span>
+                        <span class="btn-text">暗色模式</span>
+                    </button>
+                    <button class="sidebar-control-btn" id="langToggle">
+                        <span class="btn-icon">🌐</span>
+                        <span class="btn-text">English</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 遮罩层 -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- 移动端菜单按钮 -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+
+        <!-- 顶部工具栏 -->
+        <div class="top-toolbar">
+            <a href="https://github.com/openbuildxyz/web3-chinese-speaking-devs-report" target="_blank" class="top-toolbar-btn" id="githubLinkTop">
+                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+                <span class="btn-text">GitHub</span>
+            </a>
+            <button class="top-toolbar-btn" id="themeToggleTop">
+                <span class="btn-icon">🌙</span>
+                <span class="btn-text">暗色模式</span>
+            </button>
+            <button class="top-toolbar-btn" id="langToggleTop">
+                <span class="btn-icon">🌐</span>
+                <span class="btn-text">English</span>
+            </button>
+        </div>
+
+        <div class="main-wrapper">
+            <main>
+            <!-- 头部 -->
+            <header class="section" id="header">
+                <h1></h1>
+            </header>
+
+            <!-- 调研设计与样本说明 -->
+            <section class="section" id="sec0">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- TL;DR -->
+            <section class="section" id="tldr">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 第一部分：样本概况 -->
+            <section class="section" id="sec1">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap-tiny">
+                        <canvas id="statusChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap">
+                        <canvas id="ageOverallChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap">
+                        <canvas id="ageStatusChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 第二部分：教育背景 -->
+            <section class="section" id="sec2">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+
+                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="eduChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="schoolChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap-tiny">
+                        <canvas id="englishChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 第三部分：地理分布与全球化生存 -->
+            <section class="section" id="sec3">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap-tiny">
+                        <canvas id="workModelChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="geoRegionChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="geoCityLevelChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 第四部分：收入结构 -->
+            <section class="section" id="sec4">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+
+                                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="salaryFixedChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="salaryVarChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="incomeSourceChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="salarySatisChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 第五部分：技术栈与公链 -->
+            <section class="section" id="sec5">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap">
+                        <canvas id="techStackChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap-wide">
+                        <canvas id="web3StackChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="chainsOverallChart" class="chart-tall"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="chainsWeb2ObserveChart" class="chart-tall"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="chainsStudentObserveChart" class="chart-tall"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="githubContribChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 第六部分：动机与挑战 -->
+            <section class="section" id="sec6">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap">
+                        <canvas id="motiveWeb3Chart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="learnWeb3Chart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="entryHelpChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="challengeTransitionChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="exitReasonChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 第七部分：开源参与 -->
+            <section class="section" id="sec7">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+
+                                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="osKnowChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="osUseRatioChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="osWayWeb3Chart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="osWayWeb2Chart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="osMotiveChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+
+                    <div class="chart-box">
+                        <div class="chart-wrap">
+                            <canvas id="osBlockerChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="osLicenseChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="projectOpenChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap-tiny">
+                        <canvas id="osFutureChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap-wide">
+                        <canvas id="contribActivityChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap-wide">
+                        <canvas id="coreRepoContribChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 第八部分：社区与环境 -->
+            <section class="section" id="sec8">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+
+                                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="communityChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="eventsChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="eventTypeChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h3></h3>
+                    <div class="chart-wrap">
+                        <canvas id="communityNeedChart"></canvas>
+                        <p class="chart-name"></p>
+                    </div>
+                    <p class="caption"></p>
+                </div>
+
+                                <h3 class="subsection-title"></h3>
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="envSatisChart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                    <div class="chart-box">
+                        <div class="chart-wrap-tiny">
+                            <canvas id="backWeb2Chart"></canvas>
+                        </div>
+                        <p class="chart-name"></p>
+                        <p class="caption"></p>
+                    </div>
+                </div>
+
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 结语 -->
+            <section class="section" id="conclusion">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 如何贡献 -->
+            <section class="section" id="how-to-contribute">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+
+            <!-- 致谢 -->
+            <section class="section" id="acknowledgments">
+                <div class="section-header">
+                    <h2></h2>
+                </div>
+                <!-- 内容将由渲染器动态生成 -->
+            </section>
+        </main>
+        </div>
+
+        <script>
+            // 注册 datalabels 插件
+            Chart.register(ChartDataLabels);
+
+            // 检测浏览器语言
+            function getBrowserLanguage() {
+                const lang = navigator.language || navigator.userLanguage;
+                // 如果浏览器语言是中文（包括zh-CN, zh-TW等），返回'zh'，否则返回'en'
+                return lang.startsWith('zh') ? 'zh' : 'en';
+            }
+
+            // 从URL获取语言
+            function getLanguageFromURL() {
+                const hash = window.location.hash.substring(1); // 去掉#号
+                if (hash === 'en' || hash === 'zh') {
+                    return hash;
+                }
+                return null;
+            }
+
+            // 页面加载完成后初始化
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('=== 开始渲染 ===');
+                console.log('sec0配置:', contentZh.sections.find(s => s.id === 'sec0'));
+
+                // 确定初始语言
+                let initialLang = getLanguageFromURL();
+                if (!initialLang) {
+                    // 如果URL中没有指定语言，根据浏览器语言判断
+                    initialLang = getBrowserLanguage();
+                    // 更新URL但不刷新页面
+                    window.location.hash = initialLang;
+                }
+
+                // 使用确定的语言初始化
+                reportRenderer.currentLang = initialLang;
+                reportRenderer.init();
+
+                // 更新所有语言切换按钮的初始状态
+                const updateLangButtons = (lang) => {
+                    const langToggles = [document.getElementById('langToggle'), document.getElementById('langToggleTop')];
+                    langToggles.forEach(langToggle => {
+                        if (langToggle) {
+                            const langBtnText = langToggle.querySelector('.btn-text');
+                            if (langBtnText) {
+                                langBtnText.textContent = lang === 'zh' ? 'English' : '中文';
+                            }
+                        }
+                    });
+                };
+                updateLangButtons(initialLang);
+
+                // 更新GitHub按钮文字（保持"GitHub"不变，但预留接口）
+                const updateGitHubButton = (lang) => {
+                    const githubLinks = [document.querySelector('#githubLinkTop .btn-text')];
+                    githubLinks.forEach(btnText => {
+                        if (btnText) {
+                            // GitHub通常不需要翻译，保持英文
+                            btnText.textContent = 'GitHub';
+                        }
+                    });
+                };
+                updateGitHubButton(initialLang);
+
+                // 更新主题按钮函数
+                const updateThemeButtons = (isDark, lang) => {
+                    const themeToggles = [document.getElementById('themeToggle'), document.getElementById('themeToggleTop')];
+                    themeToggles.forEach(themeToggle => {
+                        if (themeToggle) {
+                            const themeIcon = themeToggle.querySelector('.btn-icon');
+                            const themeText = themeToggle.querySelector('.btn-text');
+                            if (themeIcon) {
+                                themeIcon.textContent = isDark ? '☀️' : '🌙';
+                            }
+                            if (themeText) {
+                                themeText.textContent = isDark
+                                    ? (lang === 'zh' ? '亮色模式' : 'Light Mode')
+                                    : (lang === 'zh' ? '暗色模式' : 'Dark Mode');
+                            }
+                        }
+                    });
+                };
+                // 初始化主题按钮状态
+                updateThemeButtons(false, initialLang);
+
+                // 检查渲染结果
+                setTimeout(() => {
+                    const sec0El = document.getElementById('sec0');
+                    const dynamicContent = sec0El.querySelectorAll('.dynamic-content');
+                    console.log('sec0渲染结果 - 动态内容数量:', dynamicContent.length);
+                    console.log('sec0 HTML内容长度:', sec0El.innerHTML.length);
+                }, 100);
+
+                // 主题切换
+                let isDark = false;
+                const handleThemeToggle = () => {
+                    isDark = !isDark;
+                    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+                    updateThemeButtons(isDark, reportRenderer.currentLang);
+                    reportRenderer.switchTheme(isDark);
+                };
+
+                // 为所有主题切换按钮添加事件监听
+                document.getElementById('themeToggle')?.addEventListener('click', handleThemeToggle);
+                document.getElementById('themeToggleTop')?.addEventListener('click', handleThemeToggle);
+
+                // 语言切换
+                const handleLangToggle = () => {
+                    const newLang = reportRenderer.currentLang === 'zh' ? 'en' : 'zh';
+                    // 更新URL hash
+                    window.location.hash = newLang;
+                    // 切换语言
+                    reportRenderer.switchLanguage(newLang);
+                    // 更新所有语言按钮
+                    updateLangButtons(newLang);
+                    // 更新GitHub按钮
+                    updateGitHubButton(newLang);
+                    // 更新主题按钮文本（因为可能需要不同语言）
+                    updateThemeButtons(isDark, newLang);
+                };
+
+                // 为所有语言切换按钮添加事件监听
+                document.getElementById('langToggle')?.addEventListener('click', handleLangToggle);
+                document.getElementById('langToggleTop')?.addEventListener('click', handleLangToggle);
+
+                // 监听hash变化（浏览器前进后退按钮）
+                window.addEventListener('hashchange', () => {
+                    const langFromURL = getLanguageFromURL();
+                    if (langFromURL && langFromURL !== reportRenderer.currentLang) {
+                        reportRenderer.switchLanguage(langFromURL);
+                        updateLangButtons(langFromURL);
+                        updateGitHubButton(langFromURL);
+                        updateThemeButtons(isDark, langFromURL);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
