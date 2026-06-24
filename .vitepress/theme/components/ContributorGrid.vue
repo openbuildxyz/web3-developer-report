@@ -19,6 +19,11 @@ const contributors = [
     login: 'Kiruno-lz',
     href: 'https://github.com/Kiruno-lz',
     avatar: 'https://avatars.githubusercontent.com/u/76504704?v=4'
+  },
+  {
+    login: 'ADream-ki',
+    href: 'https://github.com/ADream-ki',
+    avatar: 'https://github.com/ADream-ki.png'
   }
 ]
 </script>
